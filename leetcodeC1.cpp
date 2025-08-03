@@ -6,7 +6,8 @@
 3640. Trionic Array II(hard dp)
 3639. Minimum Time to Activate String
 
-
+// This Pattern ( New Found ) !
+209. Minimum Size Subarray Sum
 
 // 3639. Minimum Time to Activate String
 // DSU approach ! pending 
