@@ -8,6 +8,115 @@
 
 // This Pattern ( New Found ) !
 209. Minimum Size Subarray Sum
+Sliding Window x3 Questions 
+
+
+
+
+
+
+
+
+
+
+// 904. Fruit Into Baskets (Sliding window )
+class Solution {
+public:
+    int totalFruit(vector<int>& fruits) {
+        int left = 0;
+        unordered_map < int , int > freq;
+        int n = fruits.size();
+        int maxi = INT_MIN;
+        for(int right = 0; right < n; right++){
+            freq[fruits[right]]++;
+
+            // Invalid Window ?
+            while(!freq.empty() && freq.size() >  2){
+                freq[fruits[left]]--;
+                if(freq[fruits[left]] == 0) freq.erase(fruits[left]);
+                left++;
+                if(left > right) break;
+            }
+            // Valid Window ?
+            if(left <= right){
+                maxi = max(maxi , right - left + 1);
+            }
+        }
+        return maxi;
+    }
+};
+// 3634. Minimum Removals to Balance Array (Sliding Window)
+class Solution {
+public:
+    int minRemoval(vector<int>& nums, int k) {
+        
+        // reverse the Q. Consider finding MAX balanced array ! 
+        int left = 0;
+        int n = nums.size();
+        if(n == 1) return 0;
+        sort(nums.begin(),nums.end());
+        int len = 0;
+        for(int right = 0; right < n; right++){
+            int mini = nums[left] , maxi = nums[right];
+
+            // window is invalid ?
+            while((1LL * mini * k) < maxi){
+                left++;
+                if(left > right) break;
+                mini = nums[left];
+            }
+
+            if(left <= right){
+                len = max(len, right - left + 1);
+            } 
+        }
+       return n - len;
+    }
+};
+// Sliding Window Hard (Daily Q)
+class Solution {
+public:
+    int maxTotalFruits(vector<vector<int>>& fruits, int startPos, int k) {
+        int n = fruits.size();
+        long long maxi = 0;
+        // prefix sum to calc total fruits in a window
+        vector<long long> prefix(n + 1 , 0);
+        for(int i = 0; i < n; i++){
+            prefix[i + 1] = prefix[i] + fruits[i][1];
+        }
+
+        int left = 0;
+        for(int right = 0; right < n; right++){
+
+            int fruitLeft = fruits[left][0];
+            int fruitRight = fruits[right][0];
+
+            
+            long long cost_to_left = abs( startPos - fruitLeft) + (fruitRight - fruitLeft);
+            long long cost_to_right = abs( fruitRight - startPos ) + (fruitRight - fruitLeft);
+            long long cost = min(cost_to_left, cost_to_right);
+
+            // what if the whole window is unreachable ? udjust it to make valid
+            while(left <= right && cost > k ){
+                left++; // To reduce cost
+                if(left > right) break;
+
+                 fruitLeft = fruits[left][0];
+                  cost_to_left = abs( startPos - fruitLeft) + (fruitRight - fruitLeft);
+                 cost_to_right = abs( fruitRight - startPos ) + (fruitRight - fruitLeft);
+                 cost = min(cost_to_left, cost_to_right);
+            }
+            // Now we got a valid window which all areas are reachable ! 
+            // precomputed in prefix sum right ? !
+            if(left <= right){
+                long long total = prefix[right + 1] - prefix[left];
+                maxi =  max(maxi , total);
+            }
+        }
+        return maxi;
+    }
+};
+
 
 // 3639. Minimum Time to Activate String
 // DSU approach ! pending 
