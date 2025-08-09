@@ -51,32 +51,6 @@ public:
 
 // https://g.co/gemini/share/ebdec7284a51 
 
-// 0 - 1 Knapsack Problem
 
-class Solution {
-  public:
-  
-    int getMax(int w, int item, vector<int> &val, vector<int> &wt,vector<vector<int>> &dp){
-        if(item == 0){
-            if(wt[item] <= w){
-                return val[item];
-            }
-            return 0;
-        }
-        if(dp[item][w] != -1) return dp[item][w];
-       
-        int maxOnEx = getMax(w, item - 1,val, wt,dp);
-        int maxOnIn = 0;
-        if(wt[item] <= w){
-             maxOnIn = val[item] + getMax(w - wt[item], item - 1,val , wt,dp);
-        }
-        
-        return dp[item][w] = max(maxOnEx,maxOnIn);
-    }
-    int knapsack(int W, vector<int> &val, vector<int> &wt) {
-        vector< vector<int> > dp(val.size(), vector<int>(W + 1,-1));
-        return getMax(W,val.size() - 1, val, wt,dp);
-    }
-};
 // Prac lc 416 !
 
