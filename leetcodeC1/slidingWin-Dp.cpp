@@ -1,19 +1,100 @@
 3633. Earliest Finish Time for Land and Water Rides I
-3634. Minimum Removals to Balance Array
+3634. Minimum Removals to Balance Array (done But do again .. !)(Sliding Window)
 3635. Earliest Finish Time for Land and Water Rides II
 
-3639. Minimum Time to Activate String
-3640. Trionic Array II(hard dp) 
+3639. Minimum Time to Activate String (DSU approach pending !)
+3640. Trionic Array II
 
-// This Pattern ( New Found ) !
-209. Minimum Size Subarray Sum (pend ..!)
-904. Fruit Into Baskets (Sliding window ) (Daily Question)
-
-
-
+// This Pattern ( New Found ) !(SLiding Window)
+209. Minimum Size Subarray Sum  (pend ..!)
+904. Fruit Into Baskets
+2106. Maximum Fruits Harvested After at Most K Steps 
 
 
 
+// Land And Water Rides Both 3635
+
+// Why Sort ?
+// -> Say When You are at Time '8' You Have access to all prev say flights and know the data of upcoming flights
+// eaither you instantly choose the min duration flight from prev or if you gurenteely know that the
+// upcoming flight has min total of wait time + duration than all the min till time '8' so sorting 
+// gives you compare all prev and all next from a point !
+// Why prefix min and suffixtotal min ?
+// you need to track 2 things say for case 1 -> waterrides[i](being compared) < landRides[i](main)
+// Eaither your ans is minDuration of all rides till now from prev 
+// or Min total Sum till now from all next rides (adding wait time).
+// Upper Bound ? -> to reach to the value (Binary search is better) !
+
+// Last & pages - https://g.co/gemini/share/eeadc7f9ed6b
+class Solution {
+public:
+    int earliestFinishTime(vector<int>& landStartTime, vector<int>& landDuration, vector<int>& waterStartTime, vector<int>& waterDuration) {
+        int n = waterStartTime.size();
+        int m = landStartTime.size();
+        // To easily divide rides in 2 parts left and right of i in next for loop !
+        // sort acc to water start Times 
+        vector< pair<int,int> > waterRides;
+        for(int i = 0; i < n; i++){
+            waterRides.push_back({waterStartTime[i], waterDuration[i]});
+        }
+        sort(waterRides.begin(), waterRides.end());
+        // Get Min Data As req in any range's Value
+        vector<int> prefixMinDuration(n);
+        vector<int> suffixMinTotalSum(n);
+        prefixMinDuration[0] = waterRides[0].second;
+        suffixMinTotalSum[n-1] = waterRides[n-1].first + waterRides[n-1].second;
+        for(int i = 1; i < n; i++){
+            prefixMinDuration[i] = min(prefixMinDuration[i - 1], waterRides[i].second);
+        }
+        for(int i = n-2; i >= 0 ; i--){
+            suffixMinTotalSum[i] = min(suffixMinTotalSum[i + 1], waterRides[i].first + waterRides[i].second); 
+        }
+        int mini1 = INT_MAX;
+        for(int i = 0; i < m; i++){
+            int totalLandRides = landStartTime[i] + landDuration[i];
+            auto IND = upper_bound(waterRides.begin(), waterRides.end(), make_pair(totalLandRides, -1));
+            int index = IND - waterRides.begin();
+
+            // compare with both just behind and just after values for any ride in array !
+            if(index > 0) mini1 = min(mini1,totalLandRides +prefixMinDuration[index - 1]);
+            if(index < n) mini1 = min(mini1, suffixMinTotalSum[index]);   
+        }
+          vector<pair<int, int>> landRides;
+        for (int i = 0; i < m; i++) {
+            landRides.push_back({landStartTime[i], landDuration[i]});
+        }
+        sort(landRides.begin(), landRides.end());
+
+        vector<int> prefixMinDurationLand(m);
+        prefixMinDurationLand[0] = landRides[0].second;
+        for (int i = 1; i < m; i++) {
+            prefixMinDurationLand[i] = min(prefixMinDurationLand[i - 1], landRides[i].second);
+        }
+
+        vector<int> suffixMinSumLand(m);
+        suffixMinSumLand[m - 1] = (int)landRides[m - 1].first + landRides[m - 1].second;
+        for (int i = m - 2; i >= 0; i--) {
+            suffixMinSumLand[i] = min(suffixMinSumLand[i + 1], (int)landRides[i].first + landRides[i].second);
+        }
+
+        int minTimeWaterFirst = INT_MAX;
+        for (int i = 0; i < n; i++) {
+            int waterFinishTime = (int)waterStartTime[i] + waterDuration[i];
+            auto it = upper_bound(landRides.begin(), landRides.end(), make_pair((int)waterFinishTime, INT_MAX));
+            int index = it - landRides.begin();
+
+            if (index > 0) {
+                minTimeWaterFirst = min(minTimeWaterFirst, waterFinishTime + prefixMinDurationLand[index - 1]);
+            }
+            if (index < m) {
+                minTimeWaterFirst = min(minTimeWaterFirst, suffixMinSumLand[index]);
+            }
+        }
+
+        // Final result is the minimum of the two directions
+        return min(mini1, minTimeWaterFirst);
+    }
+};
 // 904. Fruit Into Baskets (Sliding window )
 class Solution {
 public:
