@@ -49,7 +49,6 @@ public:
     }
 };
 
-// https://g.co/gemini/share/ebdec7284a51 
 
 
 // Prac lc 416 !
