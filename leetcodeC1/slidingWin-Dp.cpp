@@ -122,30 +122,38 @@ public:
     }
 };
 // 3634. Minimum Removals to Balance Array (Sliding Window)
+// Remove Least elements Possible right !
+// Find The largest Sub Array which satisfies the condition and remaining elem are least To Be removed !
+
+// Main Catch is to find out how sorting works ! 
+// Yes Subarray should maintain order say 2 1 3 say 312, 123 in eaither order min , max of window remains same :)
 class Solution {
 public:
     int minRemoval(vector<int>& nums, int k) {
-        // reverse the Q. Consider finding MAX balanced array ! 
+        // What Ever The Order We Just Deal with Max and min of subarray
+        sort(nums.begin(), nums.end());
+        // Generate All Subarrays
         int left = 0;
         int n = nums.size();
-        if(n == 1) return 0;
-        sort(nums.begin(),nums.end());
-        int len = 0;
+         int maxLen = 0;
         for(int right = 0; right < n; right++){
-            int mini = nums[left] , maxi = nums[right];
+            int mini = nums[left];
+            int maxi = nums[right];
 
-            // window is invalid ?
-            while((1LL * mini * k) < maxi){
+            // if dosent satisfy condition ? 
+            while(maxi > 1LL * mini * k){
                 left++;
                 if(left > right) break;
                 mini = nums[left];
             }
-
+           
+            // compare size of window if Valid!
             if(left <= right){
-                len = max(len, right - left + 1);
-            } 
+                maxLen = max(maxLen, right - left + 1);
+            }
         }
-       return n - len;
+        // Max among all sub arrays
+        return n - maxLen;
     }
 };
 // 2106. Maximum Fruits Harvested After at Most K Steps (Sliding Window Hard (Daily Q Day 2))
