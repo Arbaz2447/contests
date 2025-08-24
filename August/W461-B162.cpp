@@ -202,13 +202,6 @@ public:
 
 
 // 3639. Minimum Time to Activate String
-// DSU approach ! pending 
-class Solution {
-public:
-    int minTime(string s, vector<int>& order, int k) {
-        
-    }
-};
 /*
 // Binary Search On Answer ! 
 // ant any time t to any time t + 1 , the soln it gives say X then for other its > X 
